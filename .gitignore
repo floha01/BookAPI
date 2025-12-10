@@ -1,0 +1,75 @@
+# ---- .NET / ASP.NET Core ----
+bin/
+obj/
+*.user
+*.suo
+*.vs/
+*.vscode/
+*.db
+*.sqlite
+*.log
+*.logs/
+*.cache/
+
+# Don't include published output
+/publish/
+/out/
+
+# Sensitive configuration
+appsettings.Development.json
+appsettings.Local.json
+*.env
+
+# ---- Build artifacts ----
+*.dll
+*.exe
+*.pdb
+*.mdb
+*.cache
+*.config
+
+# ---- Rider / JetBrains ----
+.idea/
+*.DotSettings.user
+
+# ---- VS Code ----
+.vscode/
+
+# ---- Node / React / Vite (Frontend) ----
+node_modules/
+dist/
+*.lock
+
+# Local env files
+.env
+.env.local
+.env.development
+.env.production
+
+# ---- Logs ----
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+log.txt
+
+# ---- OS-specific ----
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# ---- Docker ----
+docker-data/
+docker-compose.override.yml
+
+# ---- Others ----
+*.swp
+*.tmp
+*.temp
+
