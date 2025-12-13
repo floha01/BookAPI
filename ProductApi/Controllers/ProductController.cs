@@ -14,7 +14,7 @@ namespace ProductApi.Controllers
         {
             _context = context;
         }
-        //TODO: CRUD
+
         [HttpPost]
         public IActionResult CreateProduct([FromBody] Product product)
         {
@@ -22,7 +22,7 @@ namespace ProductApi.Controllers
             _context.SaveChanges();
             return Ok();
         }
-        [HttpGet]
+        [HttpGet("{id:int}")]
         public IActionResult GetProduct(int id)
         {
             var product = _context.Products.Find(id);
@@ -32,7 +32,7 @@ namespace ProductApi.Controllers
             }
             return Ok(product.Description);
         }
-        [HttpDelete]
+        [HttpDelete("{id:int}")]
         public IActionResult DeleteProduct(int id)
         {
             var product = _context.Products.Find(id);
@@ -44,7 +44,7 @@ namespace ProductApi.Controllers
             _context.SaveChanges();
             return NoContent();
         }
-        [HttpPut]
+        [HttpPut("{id:int}")]
         public IActionResult UpdateProduct(int id, Product product)
         {
             var p = _context.Products.Find(id);
@@ -55,7 +55,7 @@ namespace ProductApi.Controllers
             p.Title = product.Title;
             p.Description = product.Description;
             _context.SaveChanges();
-            return Ok(_context.Products.ToList());
+            return Ok(p);
         }
 
 
