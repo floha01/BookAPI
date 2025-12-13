@@ -79,7 +79,7 @@ namespace ProductApi.Controllers
         }
 
         [HttpPut("{id:int}")]
-        public async Task <IActionResult> UpdateProduct([FromBody] ProductUpdateDto dto, int id)
+        public async Task<IActionResult> UpdateProduct([FromBody] ProductUpdateDto dto, int id)
         {
             var currentProduct = await _context.Products.FindAsync(id);
             if (currentProduct == null)
