@@ -12,5 +12,6 @@ namespace ProductApi.Models
 
         [MaxLength(20, ErrorMessage = "Description must be 10 characters or less"), MinLength(5)]
         public string Description{ get; set; }
+        public decimal Price { get; set; }
     }
 }

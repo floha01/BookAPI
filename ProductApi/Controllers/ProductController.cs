@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using ProductApi.Data;
+using ProductApi.DTO;
 using ProductApi.Models;
 
 namespace ProductApi.Controllers
@@ -15,48 +17,96 @@ namespace ProductApi.Controllers
             _context = context;
         }
 
-        [HttpPost]
-        public IActionResult CreateProduct([FromBody] Product product)
+        //Get all Products
+        [HttpGet]
+        public async Task<ActionResult<List<ProductReadDto>>> GetProducts()
         {
+            var products = await _context.Products
+                .AsNoTracking()
+                .Select(p => new ProductReadDto
+                {
+                    Id = p.Id,
+                    Title = p.Title,
+                    Price = p.Price
+                })
+                .ToListAsync();
+
+            return Ok(products);
+        }
+        // Get single product by id
+        [HttpGet("({id:int})")]
+        public async Task<ActionResult<ProductReadDto>> GetProduct(int id)
+        {
+            var product = await _context.Products
+                .AsNoTracking()
+                .Where(p => p.Id == id)
+                .Select(p => new ProductReadDto
+                {
+                    Id = p.Id,
+                    Title = p.Title,
+                    Price = p.Price
+                })
+                .FirstOrDefaultAsync();
+
+            if (product == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(product);
+        }
+
+        //Create single product
+        [HttpPost]
+        public async Task<ActionResult<ProductReadDto>> CreateProduct([FromBody] ProductCreateDto dto)
+        {
+            var product = new Product
+            {
+                Title = dto.Title,
+                Description = dto.Description,
+                Price = dto.Price
+            };
             _context.Products.Add(product);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
+
+            var readDto = new ProductReadDto
+            {
+                Id = product.Id,
+                Title = product.Title,
+                Price = product.Price
+            };
+            return CreatedAtAction(nameof(GetProduct), new { id = product.Id }, readDto);
+        }
+
+        [HttpPut("{id:int}")]
+        public async Task <IActionResult> UpdateProduct([FromBody] ProductUpdateDto dto, int id)
+        {
+            var currentProduct = await _context.Products.FindAsync(id);
+            if (currentProduct == null)
+            {
+                return NotFound();
+            }
+            currentProduct.Description = dto.Description;
+            currentProduct.Price = dto.Price;
+            currentProduct.Title = dto.Title;
+            await _context.SaveChangesAsync();
+            return Ok(currentProduct);
+        }
+
+        // Delete Single Product by ID
+        [HttpDelete("{id:int}")]
+        public async Task<IActionResult> DeleteProduct(int id)
+        {
+            var product = await _context.Products.FindAsync(id);
+            if (product == null)
+                return NotFound();
+
+            _context.Products.Remove(product);
+            await _context.SaveChangesAsync();
+
             return Ok();
         }
-        [HttpGet("{id:int}")]
-        public IActionResult GetProduct(int id)
-        {
-            var product = _context.Products.Find(id);
-            if (product == null)
-            {
-                return NotFound();
-            }
-            return Ok(product.Description);
-        }
-        [HttpDelete("{id:int}")]
-        public IActionResult DeleteProduct(int id)
-        {
-            var product = _context.Products.Find(id);
-            if (product == null)
-            {
-                return NotFound();
-            }
-            _context.Products.Remove(product);
-            _context.SaveChanges();
-            return NoContent();
-        }
-        [HttpPut("{id:int}")]
-        public IActionResult UpdateProduct(int id, Product product)
-        {
-            var p = _context.Products.Find(id);
-            if (p == null)
-            {
-                return NotFound();
-            }
-            p.Title = product.Title;
-            p.Description = product.Description;
-            _context.SaveChanges();
-            return Ok(p);
-        }
+
 
 
     }
